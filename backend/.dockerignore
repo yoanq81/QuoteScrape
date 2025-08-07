@@ -1,0 +1,20 @@
+# directories
+**/[b|B]in/
+**/[O|o]bj/
+**/[O|o]ut/
+**/.vs/
+**/.vscode/
+**/.git/
+**/.gitignore
+**/node_modules/
+**/packages/
+
+# files
+*.user
+*.suo
+*.sln.docstates
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+Dockerfile*
+**/*.md
