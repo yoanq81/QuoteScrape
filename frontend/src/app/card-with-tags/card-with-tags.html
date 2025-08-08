@@ -1,0 +1,14 @@
+<div
+  class="bg-card rounded-lg shadow-md p-6 border-b border-dashed border-border max-w-2xl"
+>
+  <h4 class="text-xl font-semibold mb-2">Author: {{ author() }}</h4>
+  <p class="text-gray-700 mb-4">{{ phrase() }}</p>
+  <div class="flex flex-wrap gap-2">
+    @for (tag of tags(); track $index) {
+    <span
+      class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+    >
+      {{ tag }} </span
+    >}
+  </div>
+</div>

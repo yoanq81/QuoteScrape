@@ -1,2 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
+@theme {
+  --color-border: var(--border);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0c1420;
+    --card: #f1f5f9;
+    --card-foreground: #000000;
+    --muted: #cfd9e5;
+    --muted-foreground: #64748b;
+    --border: #e2e8f0;
+  }
+}

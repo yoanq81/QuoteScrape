@@ -1,12 +1,20 @@
+import { httpResource } from '@angular/common/http';
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { environment } from '../environments/environment.development';
+import { CardWithTags } from "./card-with-tags/card-with-tags";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  imports: [CardWithTags]
 })
 export class App {
   protected readonly title = signal('frontend');
+
+  quotes = httpResource<{
+    phrase: string,
+    author: string,
+    tags: string[],
+  }[]>(() => `${environment.apiUrl}/api/quotes`);
 }
