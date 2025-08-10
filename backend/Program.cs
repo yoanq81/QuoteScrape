@@ -1,4 +1,5 @@
-using Bogus;
+using HtmlAgilityPack;
+using HtmlAgilityPack.CssSelectors.NetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddCors(options =>
         options.AddPolicy("MyCorsPolicy",
             policy =>
             {
-                policy.WithOrigins("http://localhost:4200") // Replace with your frontend origin
+                policy.WithOrigins(["http://localhost:4200"]) // Replace with your frontend origin
                       .AllowAnyMethod()
                       .AllowAnyHeader();
             });
@@ -44,14 +45,30 @@ app.Run();
 
 static async Task<IResult> GetAllQuotes()
 {
-    var quoteFaker = new Faker<Quote>()
-            // Define rules for each property
-            .RuleFor(u => u.Phrase, f => f.Lorem.Sentence())
-            .RuleFor(u => u.Author, f => f.Name.FullName())
-            .RuleFor(u => u.Tags, f => f.Lorem.Words(f.Random.Number(2, 5)));
+    List<Quote> quotes = [];
+    var web = new HtmlWeb();
+    // loading the target web page 
+    var document = web.Load("https://quotes.toscrape.com");
+    // selecting all HTML product elements from the current page 
+    var quoteHTMLElements = document.QuerySelectorAll("div.quote");
 
-    // Generate an array of 10 fake User objects
-    Quote[] fakeQuotes = quoteFaker.Generate(10).ToArray();
+    foreach (var quoteHTMLElement in quoteHTMLElements)
+    {
+        // scraping the interesting data from the current HTML element 
+        var phrase = HtmlEntity.DeEntitize(quoteHTMLElement.QuerySelector("span.text").InnerText);
+        var author = HtmlEntity.DeEntitize(quoteHTMLElement.QuerySelector("small.author").InnerText);
+        var tagHTMLElements = quoteHTMLElement.QuerySelectorAll("div.tags > a");
+        List<string> tags = [];
+        foreach (var tagHTMLElement in tagHTMLElements)
+        {
+            tags.Add(HtmlEntity.DeEntitize(tagHTMLElement.InnerText));
+        }
+        // instancing a new Product object 
+        var quote = new Quote() { Phrase = phrase, Author = author, Tags = [.. tags] };
+        // adding the object containing the scraped data to the list 
+        quotes.Add(quote);
+    }
+
     await Task.Yield();
-    return TypedResults.Ok(fakeQuotes);
+    return TypedResults.Ok(quotes.ToArray());
 }
