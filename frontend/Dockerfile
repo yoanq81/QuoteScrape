@@ -14,13 +14,16 @@ RUN npm install
 COPY . .
 
 # Build Angular application in PROD mode
-RUN npm run build --configuration=production
+RUN npm run build
 
 # Stage 2: Serve the application using Nginx
 FROM nginx:alpine
 
+# Copy custom Nginx config
+#COPY nginx.conf /etc/nginx/nginx.conf
+
 # Copy built Angular app files to Nginx HTML folder
-COPY --from=build /usr/src/app/dist/frontend /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/frontend/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

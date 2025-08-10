@@ -1,6 +1,6 @@
 import { httpResource } from '@angular/common/http';
 import { Component, signal } from '@angular/core';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
 import { CardWithTags } from "./card-with-tags/card-with-tags";
 
 @Component({
