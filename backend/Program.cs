@@ -1,3 +1,4 @@
+using System.Linq;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 
@@ -40,29 +41,26 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", () => "Hello World!");
 
 var todoItems = app.MapGroup("/api/quotes");
-todoItems.MapGet("/", GetAllQuotes);
-app.Run();
+todoItems.MapGet("/", GetAllQuotesAsync);
 
-static async Task<IResult> GetAllQuotes()
+await app.RunAsync();
+
+static async Task<IResult> GetAllQuotesAsync()
 {
     List<Quote> quotes = [];
     var web = new HtmlWeb();
     // loading the target web page 
     var document = web.Load("https://quotes.toscrape.com");
     // selecting all HTML product elements from the current page 
-    var quoteHTMLElements = document.QuerySelectorAll("div.quote");
-
-    foreach (var quoteHTMLElement in quoteHTMLElements)
+    foreach (var quoteHTMLElement in (IList<HtmlNode>)document.QuerySelectorAll("div.quote"))
     {
         // scraping the interesting data from the current HTML element 
         var phrase = HtmlEntity.DeEntitize(quoteHTMLElement.QuerySelector("span.text").InnerText);
         var author = HtmlEntity.DeEntitize(quoteHTMLElement.QuerySelector("small.author").InnerText);
         var tagHTMLElements = quoteHTMLElement.QuerySelectorAll("div.tags > a");
         List<string> tags = [];
-        foreach (var tagHTMLElement in tagHTMLElements)
-        {
-            tags.Add(HtmlEntity.DeEntitize(tagHTMLElement.InnerText));
-        }
+        tags.AddRange(from tagHTMLElement in tagHTMLElements
+                      select HtmlEntity.DeEntitize(tagHTMLElement.InnerText));
         // instancing a new Product object 
         var quote = new Quote() { Phrase = phrase, Author = author, Tags = [.. tags] };
         // adding the object containing the scraped data to the list 
