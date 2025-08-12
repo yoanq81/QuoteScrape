@@ -18,7 +18,7 @@ public sealed class EventDispatcher(
 )
     : IEventDispatcher
 {
-    public async Task SendAsync<T>(IReadOnlyList<T> events, Type type = null,
+    public async Task SendAsync<T>(IReadOnlyList<T> events, Type? type = null,
                                    CancellationToken cancellationToken = default)
         where T : IEvent
     {
